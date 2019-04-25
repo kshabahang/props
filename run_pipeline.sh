@@ -11,6 +11,8 @@
 #     This is indicated in stanford_parser.props
 #     (See https://github.com/stanfordnlp/CoreNLP/issues/415)
 set -e
+CORENLP_HOME=$(cat NLPpath.txt)
+echo $CORENLP_HOME
 # Run Stanford parser
 java -cp "$CORENLP_HOME/*" -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP \
     -annotators tokenize,ssplit,pos,parse \
