@@ -53,51 +53,37 @@ def parse_lvl2(text):
         parsed_lvl2['props'].append(prop)
     return parsed_lvl2
 
+def graph_prop(prop):
+
+    (frame, args) = prop
+    root = Digraph(frame, filename=frame + ".gv")
+    root.node(frame)
+    roles = args.keys()
+    for role in roles:
+        if type(args[role]) == str:
+            #terminal
+            root.node(args[role])
+            root.edge(frame, args[role], role)
+        elif type(args[role]) == list:
+            child = args[role][0] #TODO: account for lists with more than one prop
+            (frame_l2, args_l2) = child
+            subgraph = Digraph(frame_l2)
+            subgraph.node(frame_l2)
+            for role_l2 in args_l2.keys():
+                subgraph.edge(frame_l2, args_l2[role_l2], role_l2)
+            root.subgraph(subgraph)
+            root.edge(frame, frame_l2, role)
+
+    return root
 
 
 if __name__ == "__main__":
-    parsed = parse("The fluffy cat sat on the blue mat")
+    parsed = parse_lvl2("Roger was driving his new car")
+    props1 = parsed['props']
+    parsed = parse_lvl2("Roger's car was a blue Tesla")
+    props2 = parsed['props']
 
-    
-    
-    g = Digraph('G', filename='hello.gv')
-    
-    ###source
-    src_indicators = ["subj"]
-    src = ''
-    ###targ
-    targ_indicators = ["prep_in", "prep_on"]
-    targ = ''
-
-    prop = parsed['props'][0]
-    (frame, args) = prop
-    roles = args.keys()
-    for role in roles:
-        print type(args[role])
-        
-        g.node(args[role])
-        if role in src_indicators:
-            src = role
-        if role in targ_indicators:
-            targ = role
-    if src != '' and targ != '':
-        g.edge(args[src], args[targ], frame)
-
-
-
-
-
-
-
-    
-
-
-
-
-    g.view()
-
-
-
+     
 
 
 
